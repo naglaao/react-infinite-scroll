@@ -1,24 +1,61 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import './App.css';
 
 
 function App() {
+
+  const [items, setItems] = useState(Array.from({ length: 20 }))
+  const hasMore = true
+
+  const fetchData = () => {
+    setTimeout(() => setItems([...items.concat(Array.from({ length: 20 }))]),
+      1500); // Simulate fetching new data after a timeout of two seconds
+  };
+
+
+  // remove item function
+  const handleRemove = (index) => {
+    let deletElement = document.querySelectorAll('.items')[index];
+    let newItem = items.filter((item) => item !== index)
+    deletElement.remove()
+    setItems(newItem);
+
+  }
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          hi iam Naglaa.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div className="App" >
+      <div id='main' className='items-container' >
+        <InfiniteScroll
+          scrollableTarget="main"
+          loader={''}
+          dataLength={items.length}
+          next={fetchData}
+          hasMore={hasMore}
         >
-          Learn React
-        </a>
-      </header>
+
+          {items.map((item, index) => (
+            <div className='items' key={index}>
+              <div className='item'>
+                <div className='item-text'>
+                  <p>Item :{index + 1} </p>
+                </div>
+                <div className='item-btn'>
+                  <button
+                    onClick={() => handleRemove(index)}
+                    className='btn'
+                  >Delete</button>
+                </div>
+              </div>
+
+            </div>
+          ))}
+
+        </InfiniteScroll>
+
+      </div>
     </div>
   );
 }
